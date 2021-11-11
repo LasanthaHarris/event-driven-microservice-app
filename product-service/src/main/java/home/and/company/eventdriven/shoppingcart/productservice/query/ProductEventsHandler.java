@@ -2,6 +2,7 @@ package home.and.company.eventdriven.shoppingcart.productservice.query;
 
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
+import org.axonframework.messaging.interceptors.ExceptionHandler;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
@@ -20,8 +21,13 @@ public class ProductEventsHandler {
 		this.repository = repository;
 	}
 	
+	@ExceptionHandler(resultType = Exception.class)
+	public void handle(Exception exception) throws Exception {
+		throw exception;
+	}
+	
 	@EventHandler
-	public void on(ProductCreatedEvent event) {
+	public void on(ProductCreatedEvent event) throws Exception {
 		
 		ProductEntity productEntity = new ProductEntity();
 		BeanUtils.copyProperties(event, productEntity);
