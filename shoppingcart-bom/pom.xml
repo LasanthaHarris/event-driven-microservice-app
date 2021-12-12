@@ -29,7 +29,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<spring-cloud.version>2020.0.3</spring-cloud.version>
-		
+		<!--docker -->
+		<fabric8.docker.version>0.38.0</fabric8.docker.version>
+		<docker.image.name>${project.artifactId}</docker.image.name>
+
 	</properties>
 
 	<dependencyManagement>
@@ -62,6 +65,10 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<layers>
+						<enabled>true</enabled>
+						<includeLayerTools>true</includeLayerTools>
+					</layers>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
@@ -88,6 +95,31 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>${fabric8.docker.version}</version>
+				<configuration>
+					<verbose>true</verbose>
+					<images>
+						<image>
+							<name>${project.artifactId}</name>
+							<alias>${project.artifactId}</alias>
+							<build>
+								<contextDir>${project.basedir}</contextDir>
+								<dockerFile>Dockerfile</dockerFile>
+								<assembly>
+									<descriptorRef>artifact</descriptorRef>
+								</assembly>
+								<tags>
+									<!-- <tag>latest</tag> -->
+									<tag>${project.version}</tag>
+								</tags>
+							</build>
+						</image>
+					</images>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
