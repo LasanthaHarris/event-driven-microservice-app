@@ -1,0 +1,20 @@
+version: "3.7"
+
+services: 
+  discovery: 
+    image: shoppingcart-discovery-service
+    ports: 
+      - 8761:8761
+  gateway:
+    image: shoppingcart-gateway-service
+    ports:
+      - 8082:8082
+    restart: on-failure 
+    healthcheck:  
+      test: ["CMD", "curl", "-f", "http://discovery:8761"]
+      start_period: 50s 
+    depends_on: 
+       - discovery
+    environment: 
+      eureka_client_serviceurl_defaultZone: http://discovery:8761/eureka
+      
