@@ -13,12 +13,9 @@ services:
     ports:
       - 8082:8082
     restart: on-failure 
-    healthcheck:  
-     test: ["CMD", "curl", "-f", "http://discovery:8761"]
-     start_period: 50s
     depends_on: 
-        # TODO: wait for eureka server to up (https://github.com/Eficode/wait-for)
        - discovery
+    command: sh -c './wait-for discovery:8761 -t 30 -- java org.springframework.boot.loader.JarLauncher'  
     environment: 
       eureka_client_serviceurl_defaultZone: http://discovery:8761/eureka
       
@@ -27,6 +24,7 @@ services:
     image: shoppingcart-product-service
     ports:
       - 8084:8084
+    command: sh -c './wait-for discovery:8761 -t 30 -- java org.springframework.boot.loader.JarLauncher'  
     depends_on: 
        - discovery
     environment: 
